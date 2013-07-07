@@ -58,12 +58,13 @@ export CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man8,%{_includedir}/crash}
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man8,%{_libdir}/crash/extensions,%{_includedir}/crash}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
 # omitted by make install
+install extensions/*.so $RPM_BUILD_ROOT%{_libdir}/crash/extensions
 cp -p crash.8 $RPM_BUILD_ROOT%{_mandir}/man8
 cp -p defs.h $RPM_BUILD_ROOT%{_includedir}/crash
 
@@ -74,6 +75,13 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc README
 %attr(755,root,root) %{_bindir}/crash
+%dir %{_libdir}/crash
+%dir %{_libdir}/crash/extensions
+%attr(755,root,root) %{_libdir}/crash/extensions/dminfo.so
+%attr(755,root,root) %{_libdir}/crash/extensions/echo.so
+#%attr(755,root,root) %{_libdir}/crash/extensions/eppic.so
+%attr(755,root,root) %{_libdir}/crash/extensions/snap.so
+%attr(755,root,root) %{_libdir}/crash/extensions/trace.so
 %{_mandir}/man8/crash.8*
 
 %files devel
