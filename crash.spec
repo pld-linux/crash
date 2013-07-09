@@ -1,6 +1,6 @@
 # TODO:
 # - memory_driver kernel module
-# - eppic extension (wants to git pull from code.google.com)
+# - libeppic if anything else (but crash extension) wants to use it
 #
 Summary:	Core Analysis Suite
 Summary(pl.UTF-8):	Zestaw narzędzi do analizy zrzutów pamięci
@@ -11,6 +11,9 @@ License:	GPL v2+
 Group:		Libraries
 Source0:	http://people.redhat.com/anderson/%{name}-%{version}.tar.gz
 # Source0-md5:	b59076aebaced87e9073328cb0a4f50a
+# git clone https://code.google.com/p/eppic
+Source1:	eppic.tar.xz
+# Source1-md5:	a9f80ad71de9d6f5b77534a7ebdbed8e
 URL:		http://people.redhat.com/anderson/
 BuildRequires:	ncurses-devel
 BuildRequires:	readline-devel
@@ -44,10 +47,11 @@ Header files for core analysis suite.
 Plik nagłówkowy narzędzia do analizy zrzutów pamięci.
 
 %prep
-%setup -q
+%setup -q -a1
 
+%{__mv} eppic extensions
 # TODO: download sources, disable git pull in eppic.mk
-%{__mv} extensions/eppic.c{,.skip}
+#%{__mv} extensions/eppic.c{,.skip}
 
 %build
 export CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses"
@@ -79,7 +83,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/crash/extensions
 %attr(755,root,root) %{_libdir}/crash/extensions/dminfo.so
 %attr(755,root,root) %{_libdir}/crash/extensions/echo.so
-#%attr(755,root,root) %{_libdir}/crash/extensions/eppic.so
+%attr(755,root,root) %{_libdir}/crash/extensions/eppic.so
 %attr(755,root,root) %{_libdir}/crash/extensions/snap.so
 %attr(755,root,root) %{_libdir}/crash/extensions/trace.so
 %{_mandir}/man8/crash.8*
