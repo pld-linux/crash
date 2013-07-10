@@ -1,6 +1,11 @@
 # TODO:
-# - memory_driver kernel module
 # - libeppic if anything else (but crash extension) wants to use it
+#
+# Conditional build:
+%bcond_without	dist_kernel	# allow non-distribution kernel
+%bcond_without	kernel		# don't build kernel modules
+%bcond_without	userspace	# don't build userspace programs
+%bcond_with	verbose		# verbose kernel module build (V=1)
 #
 Summary:	Core Analysis Suite
 Summary(pl.UTF-8):	Zestaw narzędzi do analizy zrzutów pamięci
@@ -15,10 +20,15 @@ Source0:	http://people.redhat.com/anderson/%{name}-%{version}.tar.gz
 Source1:	eppic.tar.xz
 # Source1-md5:	a9f80ad71de9d6f5b77534a7ebdbed8e
 URL:		http://people.redhat.com/anderson/
+%if %{with kernel} && %{with dist_kernel}
+BuildRequires:	kernel-module-build >= 2.6
+%endif
+%if %{with userspace}
 BuildRequires:	ncurses-devel
 BuildRequires:	readline-devel
 BuildRequires:	xz-devel
 BuildRequires:	zlib-devel
+%endif
 ExclusiveArch:	%{ix86} %{x8664} alpha arm ia64 ppc64 s390 s390x
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -46,22 +56,53 @@ Header files for core analysis suite.
 %description devel -l pl.UTF-8
 Plik nagłówkowy narzędzia do analizy zrzutów pamięci.
 
+%package -n kernel%{_alt_kernel}-char-crash
+Summary:	Memory driver for live system crash sessions
+Summary(pl.UTF-8):	Sterownik pamięci dla sesji crash na żywym systemie
+Release:	%{release}@%{_kernel_ver_str}
+Group:		Base/Kernel
+Requires(post,postun):	/sbin/depmod
+%if %{with dist_kernel}
+%requires_releq_kernel
+Requires(postun):	%releq_kernel
+%endif
+
+%description -n kernel%{_alt_kernel}-char-crash
+This package contains /dev/crash memory driver for live system crash
+sessions, which may be used when /dev/mem and /proc/kcore are
+unavailable.
+
+%description -n kernel%{_alt_kernel}-char-crash -l pl.UTF-8
+Ten pakiet zawiera sterownik pamięci /dev/crash do sesji crash na
+żywym systemie. Może być używany do analizy, kiedy /dev/mem i
+/proc/kcore nie są dostępne.
+
 %prep
 %setup -q -a1
 
 %{__mv} eppic extensions
-# TODO: download sources, disable git pull in eppic.mk
-#%{__mv} extensions/eppic.c{,.skip}
 
 %build
+%if %{with kernel}
+%build_kernel_modules -C memory_driver -m crash
+%endif
+
+%if %{with userspace}
 export CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses"
 %{__make} -j1 all extensions \
 	ARCH="%{_target_cpu}" \
 	CC="%{__cc}" \
 	CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
+
+%if %{with kernel}
+%install_kernel_modules -m memory_driver/crash -d kernel/drivers/char
+%endif
+
+%if %{with userspace}
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man8,%{_libdir}/crash/extensions,%{_includedir}/crash}
 
 %{__make} install \
@@ -71,10 +112,18 @@ install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man8,%{_libdir}/crash/extension
 install extensions/*.so $RPM_BUILD_ROOT%{_libdir}/crash/extensions
 cp -p crash.8 $RPM_BUILD_ROOT%{_mandir}/man8
 cp -p defs.h $RPM_BUILD_ROOT%{_includedir}/crash
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%post	-n kernel%{_alt_kernel}-char-crash
+%depmod %{_kernel_ver}
+
+%postun	-n kernel%{_alt_kernel}-char-crash
+%depmod %{_kernel_ver}
+
+%if %{with userspace}
 %files
 %defattr(644,root,root,755)
 %doc README
@@ -91,3 +140,11 @@ rm -rf $RPM_BUILD_ROOT
 %files devel
 %defattr(644,root,root,755)
 %{_includedir}/crash
+%endif
+
+%if %{with kernel}
+%files -n kernel%{_alt_kernel}-char-crash
+%defattr(644,root,root,755)
+%doc memory_driver/README
+/lib/modules/%{_kernel_ver}/kernel/drivers/char/crash.ko*
+%endif
