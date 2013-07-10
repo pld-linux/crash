@@ -19,6 +19,7 @@ Source0:	http://people.redhat.com/anderson/%{name}-%{version}.tar.gz
 # git clone https://code.google.com/p/eppic
 Source1:	eppic.tar.xz
 # Source1-md5:	a9f80ad71de9d6f5b77534a7ebdbed8e
+Patch0:		%{name}-format.patch
 URL:		http://people.redhat.com/anderson/
 %if %{with kernel} && %{with dist_kernel}
 BuildRequires:	kernel-module-build >= 2.6
@@ -79,6 +80,7 @@ Ten pakiet zawiera sterownik pamięci /dev/crash do sesji crash na
 
 %prep
 %setup -q -a1
+%patch0 -p1
 
 %{__mv} eppic extensions
 
