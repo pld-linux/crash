@@ -735,3 +735,118 @@
  			    		OFFSET(char_device_struct_name));
  				break;
  			case TYPE_CODE_PTR:
+--- crash-7.0.1/x86.c.orig	2013-06-17 20:18:36.000000000 +0200
++++ crash-7.0.1/x86.c	2013-07-11 15:20:43.792426177 +0200
+@@ -3886,7 +3886,7 @@
+ 
+ 	value_to_symstr(addr, locbuf, 0);
+ 	if (strlen(locbuf))
+-		sprintf(buf, locbuf);
++		strcpy(buf, locbuf);
+ 	else {
+ 		sprintf(buf, "%08lx", addr);
+ 		if (kvtop(NULL, addr, &phys, 0)) {
+@@ -4125,7 +4125,7 @@
+ 		sprintf(buf1, "0x%lx <%s>\n", value,	
+ 			value_to_symstr(value, buf2, output_radix));
+ 
+-		sprintf(p1, buf1);
++		strcpy(p1, buf1);
+ 	} else if (STREQ(argv[argc-2], "call") && 
+ 	    hexadecimal(argv[argc-1], 0)) {
+ 		/* 
+@@ -4143,7 +4143,7 @@
+                                 output_radix));
+                         if (IS_MODULE_VADDR(value) &&
+                             !strstr(buf2, "+"))
+-                                sprintf(p1, buf1);
++                                strcpy(p1, buf1);
+ 		}
+ 	} 
+ 	else if (STREQ(argv[2], "ud2a"))
+--- crash-7.0.1/arm.c.orig	2013-06-17 20:18:36.000000000 +0200
++++ crash-7.0.1/arm.c	2013-07-11 15:22:18.316618562 +0200
+@@ -1437,7 +1437,7 @@
+ 		sprintf(buf1, "0x%lx <%s>\n", value,
+ 			value_to_symstr(value, buf2, output_radix));
+ 
+-		sprintf(p1, buf1);
++		strcpy(p1, buf1);
+ 	}
+ 
+ 	console("    %s", inbuf);
+--- crash-7.0.1/arm64.c.orig	2013-06-17 20:18:36.000000000 +0200
++++ crash-7.0.1/arm64.c	2013-07-11 15:23:25.076246883 +0200
+@@ -1117,7 +1117,7 @@
+ 		sprintf(buf1, "0x%lx <%s>\n", value,
+ 			value_to_symstr(value, buf2, output_radix));
+ 
+-		sprintf(p1, buf1);
++		strcpy(p1, buf1);
+ 	}
+ 
+ 	console("    %s", inbuf);
+--- crash-7.0.1/ia64.c.orig	2013-06-17 20:18:36.000000000 +0200
++++ crash-7.0.1/ia64.c	2013-07-11 15:26:24.990897403 +0200
+@@ -1504,7 +1504,7 @@
+ 					output_radix));
+ 				if (IS_MODULE_VADDR(value) &&
+ 				    !strstr(buf2, "+"))
+-					sprintf(p2, buf1);
++					strcpy(p2, buf1);
+ 			} 
+ 		} else {
+ 			p1 = &argv[argc-1][3];
+@@ -1515,7 +1515,7 @@
+ 					output_radix));
+ 				if (IS_MODULE_VADDR(value) &&
+ 				    !strstr(buf2, "+"))
+-					sprintf(p2, buf1);
++					strcpy(p2, buf1);
+ 			}
+ 		}
+ 	}
+--- crash-7.0.1/ppc.c.orig	2013-06-17 20:18:36.000000000 +0200
++++ crash-7.0.1/ppc.c	2013-07-11 15:28:01.745192065 +0200
+@@ -1748,7 +1748,7 @@
+ 		sprintf(buf1, "0x%lx <%s>\n", value,	
+ 			value_to_symstr(value, buf2, output_radix));
+ 
+-		sprintf(p1, buf1);
++		strcpy(p1, buf1);
+ 	}
+ 
+ 	console("    %s", inbuf);
+--- crash-7.0.1/ppc64.c.orig	2013-06-17 20:18:36.000000000 +0200
++++ crash-7.0.1/ppc64.c	2013-07-11 15:29:49.736652894 +0200
+@@ -2387,7 +2387,7 @@
+ 		sprintf(buf1, "0x%lx <%s>\n", value,	
+ 			value_to_symstr(value, buf2, output_radix));
+ 
+-		sprintf(p1, buf1);
++		strcpy(p1, buf1);
+ 	}
+ 
+ 	console("    %s", inbuf);
+--- crash-7.0.1/s390.c.orig	2013-06-17 20:18:36.000000000 +0200
++++ crash-7.0.1/s390.c	2013-07-11 15:30:55.692914594 +0200
+@@ -1012,7 +1012,7 @@
+ 		sprintf(buf1, "0x%lx <%s>\n", value,
+ 			value_to_symstr(value, buf2, output_radix));
+ 
+-		sprintf(p1, buf1);
++		strcpy(p1, buf1);
+ 	}
+ 
+ 	console("    %s", inbuf);
+--- crash-7.0.1/s390x.c.orig	2013-06-17 20:18:36.000000000 +0200
++++ crash-7.0.1/s390x.c	2013-07-11 15:31:58.392365216 +0200
+@@ -1466,7 +1466,7 @@
+ 		sprintf(buf1, "0x%lx <%s>\n", value,
+ 			value_to_symstr(value, buf2, output_radix));
+ 
+-		sprintf(p1, buf1);
++		strcpy(p1, buf1);
+ 	}
+ 
+ 	console("    %s", inbuf);
