@@ -15,8 +15,8 @@
 %define		pname		crash
 Summary:	Core Analysis Suite
 Summary(pl.UTF-8):	Zestaw narzędzi do analizy zrzutów pamięci
-Name:		crash
-Version:	%{pname}%{_alt_kernel}
+Name:		%{pname}%{_alt_kernel}
+Version:	7.0.1
 Release:	%{rel}
 License:	GPL v2+
 Group:		Libraries
