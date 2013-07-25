@@ -7,19 +7,25 @@
 %bcond_without	userspace	# don't build userspace programs
 %bcond_with	verbose		# verbose kernel module build (V=1)
 #
+%if "%{_alt_kernel}" != "%{nil}"
+%undefine	with_userspace
+%endif
+
+%define		rel		1
+%define		pname		crash
 Summary:	Core Analysis Suite
 Summary(pl.UTF-8):	Zestaw narzędzi do analizy zrzutów pamięci
 Name:		crash
-Version:	7.0.1
-Release:	1
+Version:	%{pname}%{_alt_kernel}
+Release:	%{rel}
 License:	GPL v2+
 Group:		Libraries
-Source0:	http://people.redhat.com/anderson/%{name}-%{version}.tar.gz
+Source0:	http://people.redhat.com/anderson/%{pname}-%{version}.tar.gz
 # Source0-md5:	b59076aebaced87e9073328cb0a4f50a
 # git clone https://code.google.com/p/eppic
 Source1:	eppic.tar.xz
 # Source1-md5:	a9f80ad71de9d6f5b77534a7ebdbed8e
-Patch0:		%{name}-format.patch
+Patch0:		%{pname}-format.patch
 URL:		http://people.redhat.com/anderson/
 %if %{with kernel} && %{with dist_kernel}
 BuildRequires:	kernel-module-build >= 2.6
@@ -60,7 +66,7 @@ Plik nagłówkowy narzędzia do analizy zrzutów pamięci.
 %package -n kernel%{_alt_kernel}-char-crash
 Summary:	Memory driver for live system crash sessions
 Summary(pl.UTF-8):	Sterownik pamięci dla sesji crash na żywym systemie
-Release:	%{release}@%{_kernel_ver_str}
+Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 %if %{with dist_kernel}
@@ -79,7 +85,7 @@ Ten pakiet zawiera sterownik pamięci /dev/crash do sesji crash na
 /proc/kcore nie są dostępne.
 
 %prep
-%setup -q -a1
+%setup -q -a1 -n %{pname}-%{version}
 %patch0 -p1
 
 %{__mv} eppic extensions
