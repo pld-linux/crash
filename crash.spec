@@ -11,7 +11,7 @@
 %undefine	with_userspace
 %endif
 
-%define		rel		6
+%define		rel		7
 %define		pname		crash
 Summary:	Core Analysis Suite
 Summary(pl.UTF-8):	Zestaw narzędzi do analizy zrzutów pamięci
