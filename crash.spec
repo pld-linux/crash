@@ -11,21 +11,20 @@
 %undefine	with_userspace
 %endif
 
-%define		rel		7
+%define		rel		1
 %define		pname		crash
 Summary:	Core Analysis Suite
 Summary(pl.UTF-8):	Zestaw narzędzi do analizy zrzutów pamięci
 Name:		%{pname}%{_alt_kernel}
-Version:	7.0.1
+Version:	7.0.2
 Release:	%{rel}
 License:	GPL v2+
 Group:		Libraries
 Source0:	http://people.redhat.com/anderson/%{pname}-%{version}.tar.gz
-# Source0-md5:	b59076aebaced87e9073328cb0a4f50a
+# Source0-md5:	b32a437eda92c25ee1c88aa846a2e044
 # git clone https://code.google.com/p/eppic
 Source1:	eppic.tar.xz
 # Source1-md5:	a9f80ad71de9d6f5b77534a7ebdbed8e
-Patch0:		%{pname}-format.patch
 URL:		http://people.redhat.com/anderson/
 %if %{with kernel} && %{with dist_kernel}
 BuildRequires:	kernel-module-build >= 2.6
@@ -86,7 +85,6 @@ Ten pakiet zawiera sterownik pamięci /dev/crash do sesji crash na
 
 %prep
 %setup -q -a1 -n %{pname}-%{version}
-%patch0 -p1
 
 %{__mv} eppic extensions
 
