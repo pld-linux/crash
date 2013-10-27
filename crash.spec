@@ -6,18 +6,46 @@
 %bcond_without	kernel		# don't build kernel modules
 %bcond_without	userspace	# don't build userspace programs
 %bcond_with	verbose		# verbose kernel module build (V=1)
-#
-%if "%{_alt_kernel}" != "%{nil}"
-%undefine	with_userspace
+
+%if %{without kernel}
+%undefine	with_dist_kernel
 %endif
 
-%define		rel		1
+# The goal here is to have main, userspace, package built once with
+# simple release number, and only rebuild kernel packages with kernel
+# version as part of release number, without the need to bump release
+# with every kernel change.
+%if 0%{?_pld_builder:1} && %{with kernel} && %{with userspace}
+%{error:kernel and userspace cannot be built at the same time on PLD builders}
+exit 1
+%endif
+
+%if "%{_alt_kernel}" != "%{nil}"
+%if 0%{?build_kernels:1}
+%{error:alt_kernel and build_kernels are mutually exclusive}
+exit 1
+%endif
+%undefine	with_userspace
+%global		_build_kernels		%{alt_kernel}
+%else
+%global		_build_kernels		%{?build_kernels:,%{?build_kernels}}
+%endif
+
+%if %{without userspace}
+# nothing to be placed to debuginfo package
+%define		_enable_debug_packages	0
+%endif
+
+%define		kpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%kernel_pkg ; done)
+%define		bkpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%build_kernel_pkg ; done)
+
+%define		rel		2
 %define		pname		crash
 Summary:	Core Analysis Suite
 Summary(pl.UTF-8):	Zestaw narzędzi do analizy zrzutów pamięci
 Name:		%{pname}%{_alt_kernel}
 Version:	7.0.3
-Release:	%{rel}
+Release:	%{rel}%{?with_kernel:@%{_kernel_ver_str}}
 License:	GPL v2+
 Group:		Libraries
 Source0:	http://people.redhat.com/anderson/%{pname}-%{version}.tar.gz
@@ -26,9 +54,8 @@ Source0:	http://people.redhat.com/anderson/%{pname}-%{version}.tar.gz
 Source1:	eppic.tar.xz
 # Source1-md5:	a9f80ad71de9d6f5b77534a7ebdbed8e
 URL:		http://people.redhat.com/anderson/
-%if %{with kernel} && %{with dist_kernel}
-BuildRequires:	kernel-module-build >= 2.6
-%endif
+BuildRequires:	rpmbuild(macros) >= 1.678
+%{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20.2}
 %if %{with userspace}
 BuildRequires:	ncurses-devel
 BuildRequires:	readline-devel
@@ -62,26 +89,48 @@ Header files for core analysis suite.
 %description devel -l pl.UTF-8
 Plik nagłówkowy narzędzia do analizy zrzutów pamięci.
 
-%package -n kernel%{_alt_kernel}-char-crash
-Summary:	Memory driver for live system crash sessions
-Summary(pl.UTF-8):	Sterownik pamięci dla sesji crash na żywym systemie
-Release:	%{rel}@%{_kernel_ver_str}
-Group:		Base/Kernel
-Requires(post,postun):	/sbin/depmod
-%if %{with dist_kernel}
-%requires_releq_kernel
-Requires(postun):	%releq_kernel
-%endif
+%define	kernel_pkg()\
+%package -n kernel%{_alt_kernel}-char-crash\
+Summary:	Memory driver for live system crash sessions\
+Summary(pl.UTF-8):	Sterownik pamięci dla sesji crash na żywym systemie\
+Release:	%{rel}@%{_kernel_ver_str}\
+Group:		Base/Kernel\
+Requires(post,postun):	/sbin/depmod\
+%if %{with dist_kernel}\
+%requires_releq_kernel\
+Requires(postun):	%releq_kernel\
+%endif\
+\
+%description -n kernel%{_alt_kernel}-char-crash\
+This package contains /dev/crash memory driver for live system crash\
+sessions, which may be used when /dev/mem and /proc/kcore are\
+unavailable.\
+\
+%description -n kernel%{_alt_kernel}-char-crash -l pl.UTF-8\
+Ten pakiet zawiera sterownik pamięci /dev/crash do sesji crash na\
+żywym systemie. Może być używany do analizy, kiedy /dev/mem i\
+/proc/kcore nie są dostępne.\
+\
+%if %{with kernel}\
+%files -n kernel%{_alt_kernel}-char-crash\
+%defattr(644,root,root,755)\
+%doc memory_driver/README\
+/lib/modules/%{_kernel_ver}/kernel/drivers/char/crash.ko*\
+%endif\
+\
+%post	-n kernel%{_alt_kernel}-char-crash\
+%depmod %{_kernel_ver}\
+\
+%postun	-n kernel%{_alt_kernel}-char-crash\
+%depmod %{_kernel_ver}\
+%{nil}
 
-%description -n kernel%{_alt_kernel}-char-crash
-This package contains /dev/crash memory driver for live system crash
-sessions, which may be used when /dev/mem and /proc/kcore are
-unavailable.
+%define build_kernel_pkg()\
+%build_kernel_modules -C memory_driver -m crash\
+%install_kernel_modules -D installed -m memory_driver/crash -d kernel/drivers/char\
+%{nil}
 
-%description -n kernel%{_alt_kernel}-char-crash -l pl.UTF-8
-Ten pakiet zawiera sterownik pamięci /dev/crash do sesji crash na
-żywym systemie. Może być używany do analizy, kiedy /dev/mem i
-/proc/kcore nie są dostępne.
+%{?with_kernel:%{expand:%kpkg}}
 
 %prep
 %setup -q -a1 -n %{pname}-%{version}
@@ -89,9 +138,7 @@ Ten pakiet zawiera sterownik pamięci /dev/crash do sesji crash na
 %{__mv} eppic extensions
 
 %build
-%if %{with kernel}
-%build_kernel_modules -C memory_driver -m crash
-%endif
+%{?with_kernel:%{expand:%bkpkg}}
 
 %if %{with userspace}
 export CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses"
@@ -105,7 +152,8 @@ export CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses"
 rm -rf $RPM_BUILD_ROOT
 
 %if %{with kernel}
-%install_kernel_modules -m memory_driver/crash -d kernel/drivers/char
+install -d $RPM_BUILD_ROOT
+cp -a installed/* $RPM_BUILD_ROOT
 %endif
 
 %if %{with userspace}
@@ -122,12 +170,6 @@ cp -p defs.h $RPM_BUILD_ROOT%{_includedir}/crash
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-
-%post	-n kernel%{_alt_kernel}-char-crash
-%depmod %{_kernel_ver}
-
-%postun	-n kernel%{_alt_kernel}-char-crash
-%depmod %{_kernel_ver}
 
 %if %{with userspace}
 %files
@@ -146,11 +188,4 @@ rm -rf $RPM_BUILD_ROOT
 %files devel
 %defattr(644,root,root,755)
 %{_includedir}/crash
-%endif
-
-%if %{with kernel}
-%files -n kernel%{_alt_kernel}-char-crash
-%defattr(644,root,root,755)
-%doc memory_driver/README
-/lib/modules/%{_kernel_ver}/kernel/drivers/char/crash.ko*
 %endif
