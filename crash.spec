@@ -36,16 +36,17 @@ exit 1
 %define		_enable_debug_packages	0
 %endif
 
+%define		kbrs	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo "BuildRequires:kernel%%{_alt_kernel}-module-build >= 3:2.6.20.2" ; done)
 %define		kpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%kernel_pkg ; done)
 %define		bkpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%build_kernel_pkg ; done)
 
-%define		rel		2
+%define		rel		3
 %define		pname		crash
 Summary:	Core Analysis Suite
 Summary(pl.UTF-8):	Zestaw narzędzi do analizy zrzutów pamięci
-Name:		%{pname}%{_alt_kernel}
+Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
 Version:	7.0.3
-Release:	%{rel}%{?with_kernel:@%{_kernel_ver_str}}
+Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2+
 Group:		Libraries
 Source0:	http://people.redhat.com/anderson/%{pname}-%{version}.tar.gz
@@ -55,7 +56,7 @@ Source1:	eppic.tar.xz
 # Source1-md5:	a9f80ad71de9d6f5b77534a7ebdbed8e
 URL:		http://people.redhat.com/anderson/
 BuildRequires:	rpmbuild(macros) >= 1.678
-%{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20.2}
+%{?with_dist_kernel:%{expand:%kbrs}}
 %if %{with userspace}
 BuildRequires:	ncurses-devel
 BuildRequires:	readline-devel
