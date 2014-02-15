@@ -40,17 +40,17 @@ exit 1
 %define		kpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%kernel_pkg ; done)
 %define		bkpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%build_kernel_pkg ; done)
 
-%define		rel		3
+%define		rel		1
 %define		pname		crash
 Summary:	Core Analysis Suite
 Summary(pl.UTF-8):	Zestaw narzędzi do analizy zrzutów pamięci
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	7.0.3
+Version:	7.0.5
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2+
 Group:		Libraries
 Source0:	http://people.redhat.com/anderson/%{pname}-%{version}.tar.gz
-# Source0-md5:	70d46467f9f2a7115a03cb698fe5125f
+# Source0-md5:	3fba47055539e61ba3fb4d6e8a0e84b0
 # git clone https://code.google.com/p/eppic
 Source1:	eppic.tar.xz
 # Source1-md5:	a9f80ad71de9d6f5b77534a7ebdbed8e
