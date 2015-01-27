@@ -20,7 +20,7 @@ exit 1
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		1
+%define		rel		2
 %define		pname		crash
 Summary:	Core Analysis Suite
 Summary(pl.UTF-8):	Zestaw narzędzi do analizy zrzutów pamięci
