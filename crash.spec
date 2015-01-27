@@ -15,25 +15,10 @@
 exit 1
 %endif
 
-%if "%{_alt_kernel}" != "%{nil}"
-%if 0%{?build_kernels:1}
-%{error:alt_kernel and build_kernels are mutually exclusive}
-exit 1
-%endif
-%undefine	with_userspace
-%global		_build_kernels		%{alt_kernel}
-%else
-%global		_build_kernels		%{?build_kernels:,%{?build_kernels}}
-%endif
-
 %if %{without userspace}
 # nothing to be placed to debuginfo package
 %define		_enable_debug_packages	0
 %endif
-
-%define		kbrs	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo "BuildRequires:kernel%%{_alt_kernel}-module-build >= 3:2.6.20.2" ; done)
-%define		kpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%kernel_pkg ; done)
-%define		bkpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%build_kernel_pkg ; done)
 
 %define		rel		1
 %define		pname		crash
@@ -50,8 +35,8 @@ Source0:	http://people.redhat.com/anderson/%{pname}-%{version}.tar.gz
 Source1:	eppic.tar.xz
 # Source1-md5:	a9f80ad71de9d6f5b77534a7ebdbed8e
 URL:		http://people.redhat.com/anderson/
-BuildRequires:	rpmbuild(macros) >= 1.678
-%{?with_kernel:%{expand:%kbrs}}
+BuildRequires:	rpmbuild(macros) >= 1.701
+%{?with_kernel:%{expand:%buildrequires_kernel kernel%%{_alt_kernel}-module-build >= 3:2.6.20.2}}
 %if %{with userspace}
 BuildRequires:	ncurses-devel
 BuildRequires:	readline-devel
@@ -124,7 +109,7 @@ Ten pakiet zawiera sterownik pamięci /dev/crash do sesji crash na\
 %install_kernel_modules -D installed -m memory_driver/crash -d kernel/drivers/char\
 %{nil}
 
-%{?with_kernel:%{expand:%kpkg}}
+%{?with_kernel:%{expand:%create_kernel_packages}}
 
 %prep
 %setup -q -a1 -n %{pname}-%{version}
@@ -132,7 +117,7 @@ Ten pakiet zawiera sterownik pamięci /dev/crash do sesji crash na\
 %{__mv} eppic extensions
 
 %build
-%{?with_kernel:%{expand:%bkpkg}}
+%{?with_kernel:%{expand:%build_kernel_packages}}
 
 %if %{with userspace}
 export CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses"
