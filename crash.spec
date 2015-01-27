@@ -2,14 +2,9 @@
 # - libeppic if anything else (but crash extension) wants to use it
 #
 # Conditional build:
-%bcond_without	dist_kernel	# allow non-distribution kernel
 %bcond_without	kernel		# don't build kernel modules
 %bcond_without	userspace	# don't build userspace programs
 %bcond_with	verbose		# verbose kernel module build (V=1)
-
-%if %{without kernel}
-%undefine	with_dist_kernel
-%endif
 
 # The goal here is to have main, userspace, package built once with
 # simple release number, and only rebuild kernel packages with kernel
@@ -56,7 +51,7 @@ Source1:	eppic.tar.xz
 # Source1-md5:	a9f80ad71de9d6f5b77534a7ebdbed8e
 URL:		http://people.redhat.com/anderson/
 BuildRequires:	rpmbuild(macros) >= 1.678
-%{?with_dist_kernel:%{expand:%kbrs}}
+%{?with_kernel:%{expand:%kbrs}}
 %if %{with userspace}
 BuildRequires:	ncurses-devel
 BuildRequires:	readline-devel
@@ -97,10 +92,8 @@ Summary(pl.UTF-8):	Sterownik pamięci dla sesji crash na żywym systemie\
 Release:	%{rel}@%{_kernel_ver_str}\
 Group:		Base/Kernel\
 Requires(post,postun):	/sbin/depmod\
-%if %{with dist_kernel}\
 %requires_releq_kernel\
 Requires(postun):	%releq_kernel\
-%endif\
 \
 %description -n kernel%{_alt_kernel}-char-crash\
 This package contains /dev/crash memory driver for live system crash\
