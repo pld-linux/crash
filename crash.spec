@@ -43,7 +43,7 @@ BuildRequires:	readline-devel
 BuildRequires:	xz-devel
 BuildRequires:	zlib-devel
 %endif
-ExclusiveArch:	%{ix86} %{x8664} x32 alpha arm ia64 ppc64 s390 s390x
+ExclusiveArch:	%{ix86} %{x8664} alpha arm ia64 ppc64 s390 s390x
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
