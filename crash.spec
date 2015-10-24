@@ -34,6 +34,7 @@ Source0:	http://people.redhat.com/anderson/%{pname}-%{version}.tar.gz
 # git clone https://code.google.com/p/eppic
 Source1:	eppic.tar.xz
 # Source1-md5:	a9f80ad71de9d6f5b77534a7ebdbed8e
+Patch0:		%{name}-x32.patch
 URL:		http://people.redhat.com/anderson/
 BuildRequires:	rpmbuild(macros) >= 1.701
 %{?with_kernel:%{expand:%buildrequires_kernel kernel%%{_alt_kernel}-module-build >= 3:2.6.20.2}}
@@ -43,7 +44,7 @@ BuildRequires:	readline-devel
 BuildRequires:	xz-devel
 BuildRequires:	zlib-devel
 %endif
-ExclusiveArch:	%{ix86} %{x8664} alpha arm ia64 ppc64 s390 s390x
+ExclusiveArch:	%{ix86} %{x8664} x32 alpha arm ia64 ppc64 s390 s390x
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -113,6 +114,7 @@ Ten pakiet zawiera sterownik pamięci /dev/crash do sesji crash na\
 
 %prep
 %setup -q -a1 -n %{pname}-%{version}
+%patch0 -p1
 
 %{__mv} eppic extensions
 
