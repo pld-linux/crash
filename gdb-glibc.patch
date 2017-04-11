@@ -1,0 +1,23 @@
+Sync ps_get_thread_area() prototype with glibc 2.25.
+--- gdb-7.6/gdb/gdb_proc_service.h.orig	2017-04-11 18:57:07.217202451 +0200
++++ gdb-7.6/gdb/gdb_proc_service.h	2017-04-11 19:06:23.527196100 +0200
+@@ -115,7 +115,7 @@ extern pid_t ps_getpid (struct ps_procha
+ /* Fetch the special per-thread address associated with the given LWP.
+    This call is only used on a few platforms (most use a normal register).
+    The meaning of the `int' parameter is machine-dependent.  */
+-extern ps_err_e ps_get_thread_area (const struct ps_prochandle *,
++extern ps_err_e ps_get_thread_area (struct ps_prochandle *,
+ 				    lwpid_t, int, psaddr_t *);
+ 
+ 
+--- gdb-7.6/gdb/i386-linux-nat.c.orig	2017-04-11 18:57:35.960535456 +0200
++++ gdb-7.6/gdb/i386-linux-nat.c	2017-04-11 19:06:54.617195745 +0200
+@@ -849,7 +849,7 @@ i386_linux_new_fork (struct lwp_info *pa
+    storage (or its descriptor).  */
+ 
+ ps_err_e
+-ps_get_thread_area (const struct ps_prochandle *ph, 
++ps_get_thread_area (struct ps_prochandle *ph, 
+ 		    lwpid_t lwpid, int idx, void **base)
+ {
+   /* NOTE: cagney/2003-08-26: The definition of this buffer is found
