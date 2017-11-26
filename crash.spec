@@ -25,17 +25,16 @@ exit 1
 Summary:	Core Analysis Suite
 Summary(pl.UTF-8):	Zestaw narzędzi do analizy zrzutów pamięci
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	7.1.8
+Version:	7.2.0
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2+
 Group:		Libraries
 Source0:	http://people.redhat.com/anderson/%{pname}-%{version}.tar.gz
-# Source0-md5:	daf5fb52567cfcac99d3a5890edbc707
+# Source0-md5:	2fc2219541ff6b802a55c112b339ba5d
 # git clone https://code.google.com/p/eppic
 Source1:	eppic.tar.xz
 # Source1-md5:	a9f80ad71de9d6f5b77534a7ebdbed8e
 Patch0:		%{pname}-x32.patch
-Patch1:		gdb-glibc.patch
 URL:		http://people.redhat.com/anderson/
 BuildRequires:	rpmbuild(macros) >= 1.701
 %{?with_kernel:%{expand:%buildrequires_kernel kernel%%{_alt_kernel}-module-build >= 3:2.6.20.2}}
@@ -116,8 +115,6 @@ Ten pakiet zawiera sterownik pamięci /dev/crash do sesji crash na\
 %prep
 %setup -q -a1 -n %{pname}-%{version}
 %patch0 -p1
-# apply after unpacking gdb-7.6
-cat %{PATCH1} >> gdb-7.6.patch
 
 %{__mv} eppic extensions
 
