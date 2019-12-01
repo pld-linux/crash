@@ -25,12 +25,12 @@ exit 1
 Summary:	Core Analysis Suite
 Summary(pl.UTF-8):	Zestaw narzędzi do analizy zrzutów pamięci
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	7.2.3
+Version:	7.2.7
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2+
 Group:		Libraries
 Source0:	http://people.redhat.com/anderson/%{pname}-%{version}.tar.gz
-# Source0-md5:	f394b1854112239c1c2e4dcf11cfbab3
+# Source0-md5:	841350c46029c787cec4bdae953aff65
 # git clone https://code.google.com/p/eppic
 Source1:	eppic.tar.xz
 # Source1-md5:	a9f80ad71de9d6f5b77534a7ebdbed8e
