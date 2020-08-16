@@ -1,0 +1,34 @@
+--- crash-7.2.8/memory_driver/crash.c~	2020-01-30 19:57:27.000000000 +0100
++++ crash-7.2.8/memory_driver/crash.c	2020-08-16 18:41:10.187285717 +0200
+@@ -34,6 +34,7 @@
+ #include <linux/mm.h>
+ #include <linux/highmem.h>
+ #include <linux/mmzone.h>
++#include <linux/version.h>
+ 
+ extern int page_is_ram(unsigned long);
+ 
+@@ -186,7 +186,11 @@
+                return -EFAULT;
+        }
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5,8,0)
+        if (probe_kernel_write(vaddr, buffer, count)) {
++#else
++       if (copy_to_kernel_nofault(vaddr, buffer, count)) {
++#endif
+                unmap_virtual(page);
+                return -EFAULT;
+        }
+@@ -227,7 +227,11 @@
+ 	 * Use bounce buffer to bypass the CONFIG_HARDENED_USERCOPY
+ 	 * kernel text restriction.
+ 	 */
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5,8,0)
+         if (probe_kernel_read(buffer, vaddr, count)) {
++#else
++        if (copy_from_kernel_nofault(buffer, vaddr, count)) {
++#endif
+                 unmap_virtual(page);
+                 return -EFAULT;
+         }
