@@ -29,13 +29,15 @@ Version:	7.2.8
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2+
 Group:		Libraries
+#Source0Download: https://github.com/crash-utility/crash/releases
+#future releases:	https://github.com/crash-utility/crash/archive/%{version}/%{pname}-%{version}.tar.gz
 Source0:	http://people.redhat.com/anderson/%{pname}-%{version}.tar.gz
 # Source0-md5:	a76e61e81058774f62e562435e5af396
 # git clone https://code.google.com/p/eppic
 Source1:	eppic.tar.xz
 # Source1-md5:	a9f80ad71de9d6f5b77534a7ebdbed8e
 Patch0:		%{pname}-x32.patch
-URL:		http://people.redhat.com/anderson/
+URL:		https://github.com/crash-utility/crash
 BuildRequires:	rpmbuild(macros) >= 1.701
 %{?with_kernel:%{expand:%buildrequires_kernel kernel%%{_alt_kernel}-module-build >= 3:2.6.20.2}}
 %if %{with userspace}
