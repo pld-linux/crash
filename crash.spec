@@ -25,18 +25,19 @@ exit 1
 Summary:	Core Analysis Suite
 Summary(pl.UTF-8):	Zestaw narzędzi do analizy zrzutów pamięci
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	7.2.8
+Version:	8.0.4
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2+
 Group:		Libraries
-#Source0Download: https://github.com/crash-utility/crash/releases
-#future releases:	https://github.com/crash-utility/crash/archive/%{version}/%{pname}-%{version}.tar.gz
-Source0:	http://people.redhat.com/anderson/%{pname}-%{version}.tar.gz
-# Source0-md5:	a76e61e81058774f62e562435e5af396
-# git clone https://code.google.com/p/eppic
+Source0:	https://github.com/crash-utility/crash/archive/%{version}/%{pname}-%{version}.tar.gz
+# Source0-md5:	5d8513ded5c9517e713a75e712d72e3a
+# git clone -b v5.0 https://github.com/lucchouina/eppic
 Source1:	eppic.tar.xz
-# Source1-md5:	a9f80ad71de9d6f5b77534a7ebdbed8e
+# Source1-md5:	a04143f6eb0d72c33cd53329dc1b4803
+Source2:	https://ftp.gnu.org/gnu/gdb/gdb-10.2.tar.gz
+# Source2-md5:	8130d3441bcd1689987e3da5e4f8cd17
 Patch0:		%{pname}-x32.patch
+Patch1:		only-patch-gdb.patch
 URL:		https://github.com/crash-utility/crash
 BuildRequires:	rpmbuild(macros) >= 1.701
 %{?with_kernel:%{expand:%buildrequires_kernel kernel%%{_alt_kernel}-module-build >= 3:2.6.20.2}}
@@ -115,8 +116,9 @@ Ten pakiet zawiera sterownik pamięci /dev/crash do sesji crash na\
 %{?with_kernel:%{expand:%create_kernel_packages}}
 
 %prep
-%setup -q -a1 -n %{pname}-%{version}
+%setup -q -a1 -a2 -n %{pname}-%{version}
 %patch0 -p1
+%patch1 -p1
 
 %{__mv} eppic extensions
 
@@ -125,7 +127,12 @@ Ten pakiet zawiera sterownik pamięci /dev/crash do sesji crash na\
 
 %if %{with userspace}
 export CPPFLAGS="%{rpmcppflags} -I/usr/include/ncurses"
-%{__make} -j1 all extensions \
+%{__make} \
+	ARCH="%{_target_cpu}" \
+	CC="%{__cc}" \
+	CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
+
+%{__make} -j1 extensions \
 	ARCH="%{_target_cpu}" \
 	CC="%{__cc}" \
 	CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
@@ -165,7 +172,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/crash/extensions/echo.so
 %attr(755,root,root) %{_libdir}/crash/extensions/eppic.so
 %attr(755,root,root) %{_libdir}/crash/extensions/snap.so
-%attr(755,root,root) %{_libdir}/crash/extensions/trace.so
 %{_mandir}/man8/crash.8*
 
 %files devel

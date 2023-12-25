@@ -1,0 +1,16 @@
+--- crash-8.0.4/Makefile~	2023-11-16 03:20:42.000000000 +0100
++++ crash-8.0.4/Makefile	2023-12-25 12:29:22.153190280 +0100
+@@ -251,12 +251,11 @@
+ 
+ all: make_configure
+ 	@./configure ${CONF_TARGET_FLAG} -p "RPMPKG=${RPMPKG}" -b
++	@$(MAKE) gdb_patch
+ 	@$(MAKE) gdb_merge
+ #	@$(MAKE) extensions
+ 
+ gdb_merge: force
+-	@if [ ! -f ${GDB}/README ]; then \
+-	  $(MAKE) gdb_unzip; fi
+ 	@echo "${LDFLAGS} -lz -ldl -rdynamic" > ${GDB}/gdb/mergelibs
+ 	@echo "../../${PROGRAM} ../../${PROGRAM}lib.a" > ${GDB}/gdb/mergeobj
+ 	@rm -f ${PROGRAM}
