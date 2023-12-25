@@ -34,8 +34,8 @@ Source0:	https://github.com/crash-utility/crash/archive/%{version}/%{pname}-%{ve
 # git clone -b v5.0 https://github.com/lucchouina/eppic
 Source1:	eppic.tar.xz
 # Source1-md5:	a04143f6eb0d72c33cd53329dc1b4803
-Source2:	https://ftp.gnu.org/gnu/gdb/gdb-10.2.tar.gz
-# Source2-md5:	8130d3441bcd1689987e3da5e4f8cd17
+Source2:	https://ftp.gnu.org/gnu/gdb/gdb-10.2.tar.xz
+# Source2-md5:	c044b7146903ec51c9d2337a29aee93b
 Patch0:		%{pname}-x32.patch
 Patch1:		only-patch-gdb.patch
 URL:		https://github.com/crash-utility/crash
