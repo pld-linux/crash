@@ -25,12 +25,12 @@ exit 1
 Summary:	Core Analysis Suite
 Summary(pl.UTF-8):	Zestaw narzędzi do analizy zrzutów pamięci
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	8.0.4
+Version:	8.0.5
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2+
 Group:		Libraries
 Source0:	https://github.com/crash-utility/crash/archive/%{version}/%{pname}-%{version}.tar.gz
-# Source0-md5:	5d8513ded5c9517e713a75e712d72e3a
+# Source0-md5:	b1976b20980a179572bd4d709cc5f209
 # git clone -b v5.0 https://github.com/lucchouina/eppic
 Source1:	eppic.tar.xz
 # Source1-md5:	a04143f6eb0d72c33cd53329dc1b4803
