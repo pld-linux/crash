@@ -25,17 +25,18 @@ exit 1
 Summary:	Core Analysis Suite
 Summary(pl.UTF-8):	Zestaw narzędzi do analizy zrzutów pamięci
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	8.0.6
+Version:	9.0.1
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2+
 Group:		Libraries
+#Source0Download: https://github.com/crash-utility/crash/releases
 Source0:	https://github.com/crash-utility/crash/archive/%{version}/%{pname}-%{version}.tar.gz
-# Source0-md5:	35af5c716130326ce5a706a5808605c7
+# Source0-md5:	adc45740ff369692b8d884f767f2f15a
 # git clone -b v5.0 https://github.com/lucchouina/eppic
 Source1:	eppic.tar.xz
 # Source1-md5:	a04143f6eb0d72c33cd53329dc1b4803
-Source2:	https://ftp.gnu.org/gnu/gdb/gdb-10.2.tar.xz
-# Source2-md5:	c044b7146903ec51c9d2337a29aee93b
+Source2:	https://ftp.gnu.org/gnu/gdb/gdb-16.2.tar.xz
+# Source2-md5:	05e4a7e3b177432771aa7277af9bccee
 Patch0:		%{pname}-x32.patch
 Patch1:		only-patch-gdb.patch
 URL:		https://github.com/crash-utility/crash
@@ -168,10 +169,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/crash
 %dir %{_libdir}/crash
 %dir %{_libdir}/crash/extensions
-%attr(755,root,root) %{_libdir}/crash/extensions/dminfo.so
-%attr(755,root,root) %{_libdir}/crash/extensions/echo.so
-%attr(755,root,root) %{_libdir}/crash/extensions/eppic.so
-%attr(755,root,root) %{_libdir}/crash/extensions/snap.so
+%{_libdir}/crash/extensions/dminfo.so
+%{_libdir}/crash/extensions/echo.so
+%{_libdir}/crash/extensions/eppic.so
+%{_libdir}/crash/extensions/snap.so
 %{_mandir}/man8/crash.8*
 
 %files devel
