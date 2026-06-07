@@ -20,7 +20,7 @@ exit 1
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		3
+%define		rel		4
 %define		pname		crash
 Summary:	Core Analysis Suite
 Summary(pl.UTF-8):	Zestaw narzędzi do analizy zrzutów pamięci
@@ -109,7 +109,7 @@ Ten pakiet zawiera sterownik pamięci /dev/crash do sesji crash na\
 %depmod %{_kernel_ver}\
 %{nil}
 
-%define build_kernel_pkg()\
+%define build_kernel_pkg() \
 %build_kernel_modules -C memory_driver -m crash\
 %install_kernel_modules -D installed -m memory_driver/crash -d kernel/drivers/char\
 %{nil}
