@@ -20,7 +20,7 @@ exit 1
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		4
+%define		rel		5
 %define		pname		crash
 Summary:	Core Analysis Suite
 Summary(pl.UTF-8):	Zestaw narzędzi do analizy zrzutów pamięci
@@ -34,7 +34,7 @@ Source0:	https://github.com/crash-utility/crash/archive/%{version}/%{pname}-%{ve
 # Source0-md5:	adc45740ff369692b8d884f767f2f15a
 # git clone -b v5.0 https://github.com/lucchouina/eppic
 Source1:	eppic.tar.xz
-# Source1-md5:	a04143f6eb0d72c33cd53329dc1b4803
+# Source1-md5:	5b1a39ed5a2fb474923b9e7b9d663787
 Source2:	https://ftp.gnu.org/gnu/gdb/gdb-16.2.tar.xz
 # Source2-md5:	05e4a7e3b177432771aa7277af9bccee
 Patch0:		%{pname}-x32.patch
