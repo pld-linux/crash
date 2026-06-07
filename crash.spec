@@ -20,7 +20,7 @@ exit 1
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		2
+%define		rel		3
 %define		pname		crash
 Summary:	Core Analysis Suite
 Summary(pl.UTF-8):	Zestaw narzędzi do analizy zrzutów pamięci
@@ -75,7 +75,7 @@ Header files for core analysis suite.
 %description devel -l pl.UTF-8
 Plik nagłówkowy narzędzia do analizy zrzutów pamięci.
 
-%define	kernel_pkg()\
+%define	kernel_pkg() \
 %package -n kernel%{_alt_kernel}-char-crash\
 Summary:	Memory driver for live system crash sessions\
 Summary(pl.UTF-8):	Sterownik pamięci dla sesji crash na żywym systemie\
